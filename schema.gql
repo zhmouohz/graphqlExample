@@ -1,0 +1,40 @@
+type Query{
+    couponUnionQuery(name:String!,user:Auth,city:City):[[CouponUnion]]
+    couponQuery(name:String!,user:Auth,city:City):[[Coupon]]
+}
+type Mutation{
+    changeCouponName(name:String,newName:String):[Boolean]
+}
+
+type CouponType1 implements Coupon{
+    id:String
+    name:String
+    coupon1Inf:String
+    sign(name:String):String
+}
+
+
+type CouponType2 implements Coupon{
+    id:String
+    name:String
+    coupon2Inf:String
+    sign(name:String):String
+}
+interface Coupon {
+  id        : String
+  name: String
+  sign(name:String):String
+}
+
+union CouponUnion = CouponType1 | CouponType2
+
+enum City {
+  BeiJing
+  Other
+}
+
+input Auth {
+  userId: Int
+  token: String
+}
+
