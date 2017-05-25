@@ -117,7 +117,7 @@ const mutationString = `mutation{
 }`
 
 //通过graphql方法执行，依次为查询，修改，
-graphql.graphql(schema, queryString, root).then(result=>console.log(JSON.stringify(result)))
+graphql.graphql(schema, queryString, root, {}, {"arg1": "OMG"}).then(result=>console.log(JSON.stringify(result)))
 //注意mutation时的执行顺序
 graphql.graphql(schema, mutationString, root).then(console.log(couponList))
 
