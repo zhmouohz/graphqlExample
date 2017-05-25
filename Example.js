@@ -5,7 +5,6 @@ const tools = require("graphql-tools")
 
 //模拟业务逻辑
 const sign = arg => {
-    console.log(arg)
     return "sign  " + arg.name
 }
 //模拟业务逻辑
@@ -21,7 +20,13 @@ const getCoupon = arg => {
 }
 //模拟业务逻辑
 const changeName = arg => {
-    couponList = couponList.map(coupon=>coupon.name === arg.name ? coupon.name = arg.newName : coupon.name = coupon.name)
+    for (let coupon of couponList) {
+        coupon.name === arg.name ?
+            coupon.name = arg.newName : coupon.name = coupon.name
+    }
+    console.log("<<<<<<<<<<<<")
+    console.log(couponList)
+    console.log(">>>>>>>>>>>>")
 }
 //模拟数据
 let couponList = [
@@ -113,7 +118,7 @@ const mutationString = `mutation{
 
 //通过graphql方法执行，依次为查询，修改，
 graphql.graphql(schema, queryString, root).then(result=>console.log(JSON.stringify(result)))
-
+//注意mutation时的执行顺序
 graphql.graphql(schema, mutationString, root).then(console.log(couponList))
 
 //创建一个服务器，监听8080端口
