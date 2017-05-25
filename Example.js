@@ -5,6 +5,7 @@ const tools = require("graphql-tools")
 
 //模拟业务逻辑
 const sign = arg => {
+    console.log(arg)
     return "sign  " + arg.name
 }
 //模拟业务逻辑
@@ -86,7 +87,9 @@ const resolver = {
 tools.addResolveFunctionsToSchema(schema, resolver)
 
 //字符串形式的查询语句
-const queryString = `{
+const queryString = `
+
+query($arg1: String="argument1"){
   couponUnionQuery(name: "01", user: {userId: 111111, token: "%$#Q$%#"}) {
     ... on CouponType1 {
       coupon1Inf
@@ -100,7 +103,7 @@ const queryString = `{
   }
 }
 fragment QueryInf on Coupon {
-  sign(name:"signInf")
+  sign(name:$arg1)
 }`
 
 //字符串形式的修改语句，修改语句与查询语句的区别在于修改语句保证会一个接一个进行，查询语句不保证
@@ -123,9 +126,6 @@ app.use('/graphql', graphqlHTTP({
     schema,
     rootValue: root,
     graphiql: true,
-    pretty: true,
-    context: {
-        aaa: "abc"
-    }
+    pretty: true
 }))
 app.listen(8080)
