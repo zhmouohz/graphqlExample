@@ -1,0 +1,31 @@
+graphql是一种强类型的中间层查询语言，用于定义了前后台的数据交换接口。
+由于是强类型的，其传入数据及输出数据必须满足其定义的格式。
+项目中其模式定义于schema.gql文件中，通过Example.js中的graphql.buildSchema(fs.readFileSync("./schema.gql").toString())语句引用。
+
+graphql定义了查询Query和修改mutation两种操作，这两种定义区别在于其执行循序，
+修改操作会保证其操作会一个接一个的执行，而查询操作不会。
+
+示例项目通过Node Example.js的执行，
+其中
+graphql.graphql(schema, queryString, root, {}, {"arg1": "OMG"}).then(result=>console.log(JSON.stringify(result)))
+graphql.graphql(schema, mutationString, root).then(console.log(couponList))
+两句为直接执行，而从const express = require('express')之后的语句则开启一个服务器，
+可以通过http://localhost:8080/graphql访问
+
+schema.gql文件中定义了两种查询操作couponUnionQuery couponQuery和一种修改操作 changeCouponName
+在查询操作中，
+其输入值为 一个必填的String类型的name,一个Auth类型的user（user的定义也在该文件中）和一个City类型的city(City为一个枚举类型，传入后台时该值为其键值的字符串)
+当传入输入值后，后台将接收到一个包含其所有输入参数的对象，
+返回值分别为Union类型CouponUnion的List的List 和 Interface类型Coupon的List的List
+其中，第二层List是由于项目模拟访问数据库而使用了generator，graphql也可以使用同步的方法
+CouponUnion、Coupon以及其具体实现CouponType1和CouponType2的数据结构也在文件中定义，
+其中sign(name:String)意味着其将接收一个变量作为参数
+注意:Union类型不要求其实现类型都满足同一接口
+
+Example.js中58行const root一句定义了schema中定义接口的实现
+通过graphql方法可得到一个Promise,通过调用其then()可指定回调函数
+其参数包括指定的schema,查询语句，root，上下文，上文提到的变量的列表，操作名称
+当返回类型为Union或Interface时，为了指定返回的类型，在https://github.com/graphql/graphql-js/issues/604提及
+可以导入graphql-tools
+通过形如第70行const resolver一句指定返回的数据类型具体实现，
+并使用addResolveFunctionsToSchema将其加入schema中
